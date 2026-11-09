@@ -1,0 +1,10 @@
+# Generated data, checkpoints, logs and plots (see AGENTS.md).
+data/
+runs/
+
+.venv/
+__pycache__/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
