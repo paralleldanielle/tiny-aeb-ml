@@ -29,6 +29,7 @@ uv run python scripts/check_setup.py
 ## Docs
 
 - [`docs/PLAN.md`](docs/PLAN.md): task spec, milestones, experiments
+- [`docs/MODEL.md`](docs/MODEL.md): SmolLM2-135M architecture, diagram and walkthrough
 - [`docs/notes/LEARNING_LOG.md`](docs/notes/LEARNING_LOG.md): what each milestone taught
 - [`docs/notes/RESULTS.md`](docs/notes/RESULTS.md): eval results per checkpoint and split
 - [`AGENTS.md`](AGENTS.md) and [`docs/STYLE.md`](docs/STYLE.md): rules for coding agents

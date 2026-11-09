@@ -1,0 +1,233 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1140" width="1100" height="1140" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>SmolLM2-135M architecture</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3d444d"/>
+    </marker>
+    <style>
+      text { fill: #1f2328; }
+      .h { font-size: 15px; font-weight: 700; }
+      .hs { font-size: 13px; font-weight: 700; }
+      .s { font-size: 12px; fill: #57606a; }
+      .xs { font-size: 11px; fill: #57606a; }
+      .v { font-size: 12px; font-weight: 700; }
+      .flow { stroke: #3d444d; stroke-width: 1.6; fill: none; marker-end: url(#arrow); }
+      .line { stroke: #3d444d; stroke-width: 1.6; fill: none; }
+      .zoom { stroke: #8c959f; stroke-width: 1.3; stroke-dasharray: 6 4; fill: none; }
+      .box { stroke-width: 1.6; }
+      .emb { fill: #e6eefb; stroke: #4c72b0; }
+      .norm { fill: #e5f4e9; stroke: #4f9a64; }
+      .attn { fill: #fde8d2; stroke: #c9762a; }
+      .ffn { fill: #f0e2f7; stroke: #8e5bab; }
+      .rope { fill: #fff3bf; stroke: #b88c12; }
+      .op { fill: #ffffff; stroke: #3d444d; stroke-width: 1.6; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1100" height="1140" rx="16" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="40" y="56" font-size="28" font-weight="700">SmolLM2-135M</text>
+  <text x="40" y="84" class="s" font-size="14">Llama-style decoder-only transformer · 134.5M parameters · fp32 weights ≈ 0.54 GB</text>
+
+  <!-- ===== Main column (data flows bottom to top) ===== -->
+
+  <!-- Output -->
+  <text x="360" y="126" text-anchor="middle" class="hs">Next-token logits</text>
+  <text x="360" y="142" text-anchor="middle" class="xs">[seq, 49,152]</text>
+  <line x1="360" y1="182" x2="360" y2="150" class="flow"/>
+
+  <rect x="230" y="182" width="260" height="44" rx="8" class="box emb"/>
+  <text x="360" y="201" text-anchor="middle" class="h">Linear output layer</text>
+  <text x="360" y="218" text-anchor="middle" class="s">576 → 49,152</text>
+  <text x="215" y="200" text-anchor="end" class="s">Tied to the embedding:</text>
+  <text x="215" y="216" text-anchor="end" class="s">same 49,152 × 576 matrix</text>
+
+  <line x1="360" y1="256" x2="360" y2="227" class="flow"/>
+  <rect x="230" y="256" width="260" height="34" rx="8" class="box norm"/>
+  <text x="360" y="278" text-anchor="middle" class="h">Final RMSNorm</text>
+  <line x1="360" y1="344" x2="360" y2="291" class="flow"/>
+
+  <!-- Transformer block container -->
+  <rect x="180" y="316" width="340" height="588" rx="14" fill="#f6f8fa" stroke="#afb8c1" stroke-width="1.4"/>
+  <text x="165" y="606" text-anchor="end" font-size="34" font-weight="700">30×</text>
+  <text x="165" y="628" text-anchor="end" class="s">transformer</text>
+  <text x="165" y="644" text-anchor="end" class="s">blocks</text>
+  <text x="506" y="874" text-anchor="end" class="xs">own weights per block,</text>
+  <text x="506" y="890" text-anchor="end" class="xs">3.54M params each</text>
+
+  <!-- Residual add 2 -->
+  <circle cx="360" cy="356" r="12" class="op"/>
+  <path d="M353,356 H367 M360,349 V363" class="line"/>
+  <line x1="360" y1="396" x2="360" y2="369" class="flow"/>
+
+  <!-- Feed forward -->
+  <rect x="230" y="396" width="260" height="64" rx="8" class="box ffn"/>
+  <text x="360" y="424" text-anchor="middle" class="h">Feed forward</text>
+  <text x="360" y="443" text-anchor="middle" class="s">SwiGLU · 576 → 1,536 → 576</text>
+  <line x1="360" y1="496" x2="360" y2="461" class="flow"/>
+
+  <!-- RMSNorm 2 -->
+  <rect x="230" y="496" width="260" height="34" rx="8" class="box norm"/>
+  <text x="360" y="518" text-anchor="middle" class="h">RMSNorm 2</text>
+  <line x1="360" y1="568" x2="360" y2="531" class="flow"/>
+
+  <!-- Residual add 1 -->
+  <circle cx="360" cy="580" r="12" class="op"/>
+  <path d="M353,580 H367 M360,573 V587" class="line"/>
+  <line x1="360" y1="620" x2="360" y2="593" class="flow"/>
+
+  <!-- Attention -->
+  <rect x="230" y="620" width="260" height="70" rx="8" class="box attn"/>
+  <text x="360" y="650" text-anchor="middle" class="h">Grouped-query attention</text>
+  <text x="360" y="670" text-anchor="middle" class="s">causal mask · RoPE · 9 Q / 3 KV heads</text>
+  <line x1="360" y1="730" x2="360" y2="691" class="flow"/>
+
+  <!-- RMSNorm 1 -->
+  <rect x="230" y="730" width="260" height="34" rx="8" class="box norm"/>
+  <text x="360" y="752" text-anchor="middle" class="h">RMSNorm 1</text>
+  <line x1="360" y1="960" x2="360" y2="765" class="flow"/>
+
+  <!-- Residual connections -->
+  <circle cx="360" cy="840" r="3.5" fill="#3d444d"/>
+  <path d="M360,840 H205 V580 H347" class="flow"/>
+  <circle cx="360" cy="550" r="3.5" fill="#3d444d"/>
+  <path d="M360,550 H205 V356 H347" class="flow"/>
+  <text x="212" y="832" class="xs">residual</text>
+  <text x="212" y="542" class="xs">residual</text>
+
+  <!-- Embedding -->
+  <rect x="230" y="960" width="260" height="44" rx="8" class="box emb"/>
+  <text x="360" y="979" text-anchor="middle" class="h">Token embedding layer</text>
+  <text x="360" y="996" text-anchor="middle" class="s">49,152 × 576 lookup table</text>
+  <text x="215" y="978" text-anchor="end" class="s">28.3M params,</text>
+  <text x="215" y="994" text-anchor="end" class="s">21% of the model</text>
+  <line x1="360" y1="1050" x2="360" y2="1005" class="flow"/>
+
+  <!-- Input -->
+  <text x="360" y="1070" text-anchor="middle" class="hs">Token IDs  [seq]</text>
+  <text x="360" y="1090" text-anchor="middle" class="s">"Ego speed 72 km/h. …" → 28 tokens</text>
+
+  <!-- ===== Zoom: feed forward (SwiGLU) ===== -->
+  <line x1="491" y1="428" x2="600" y2="428" class="zoom"/>
+  <rect x="600" y="300" width="470" height="292" rx="12" fill="#faf5fc" stroke="#8e5bab" stroke-width="1.3"/>
+  <text x="618" y="326" class="hs">Feed forward (SwiGLU)</text>
+  <text x="1052" y="326" text-anchor="end" class="xs">2.65M params per block (75%)</text>
+
+  <line x1="835" y1="370" x2="835" y2="344" class="flow"/>
+  <text x="845" y="356" class="xs">out [seq, 576]</text>
+  <rect x="725" y="370" width="220" height="40" rx="7" class="box ffn"/>
+  <text x="835" y="387" text-anchor="middle" class="hs">Linear (down)</text>
+  <text x="835" y="403" text-anchor="middle" class="xs">1,536 → 576</text>
+
+  <line x1="835" y1="429" x2="835" y2="411" class="flow"/>
+  <circle cx="835" cy="440" r="11" class="op"/>
+  <path d="M830,435 L840,445 M840,435 L830,445" class="line"/>
+  <text x="790" y="430" text-anchor="end" class="xs">elementwise ×</text>
+
+  <path d="M735,462 V440 H823" class="flow"/>
+  <path d="M935,504 V440 H847" class="flow"/>
+
+  <rect x="690" y="462" width="90" height="26" rx="7" class="box ffn"/>
+  <text x="735" y="480" text-anchor="middle" class="hs">SiLU</text>
+  <line x1="735" y1="504" x2="735" y2="489" class="flow"/>
+
+  <rect x="645" y="504" width="180" height="40" rx="7" class="box ffn"/>
+  <text x="735" y="521" text-anchor="middle" class="hs">Linear (gate)</text>
+  <text x="735" y="537" text-anchor="middle" class="xs">576 → 1,536</text>
+  <rect x="845" y="504" width="180" height="40" rx="7" class="box ffn"/>
+  <text x="935" y="521" text-anchor="middle" class="hs">Linear (up)</text>
+  <text x="935" y="537" text-anchor="middle" class="xs">576 → 1,536</text>
+
+  <path d="M835,592 V564" class="line"/>
+  <circle cx="835" cy="564" r="3.5" fill="#3d444d"/>
+  <path d="M835,564 H735 V545" class="flow"/>
+  <path d="M835,564 H935 V545" class="flow"/>
+  <text x="845" y="582" class="xs">in [seq, 576]</text>
+
+  <!-- ===== Zoom: grouped-query attention ===== -->
+  <line x1="491" y1="655" x2="600" y2="655" class="zoom"/>
+  <rect x="600" y="606" width="470" height="322" rx="12" fill="#fef6ed" stroke="#c9762a" stroke-width="1.3"/>
+  <text x="618" y="632" class="hs">Grouped-query attention</text>
+  <text x="1052" y="632" text-anchor="end" class="xs">0.88M params per block (25%)</text>
+
+  <line x1="764" y1="662" x2="764" y2="642" class="flow"/>
+  <rect x="664" y="662" width="200" height="36" rx="7" class="box attn"/>
+  <text x="764" y="678" text-anchor="middle" class="hs">Linear O</text>
+  <text x="764" y="692" text-anchor="middle" class="xs">576 → 576 (mix the 9 heads)</text>
+  <line x1="764" y1="722" x2="764" y2="699" class="flow"/>
+
+  <rect x="612" y="722" width="304" height="50" rx="7" class="box attn"/>
+  <text x="764" y="742" text-anchor="middle" class="hs">Causal scaled dot-product attention</text>
+  <text x="764" y="760" text-anchor="middle" class="xs">softmax(QKᵀ / √64 + mask) · V, per head</text>
+
+  <line x1="660" y1="794" x2="660" y2="773" class="flow"/>
+  <line x1="764" y1="794" x2="764" y2="773" class="flow"/>
+  <line x1="868" y1="838" x2="868" y2="773" class="flow"/>
+  <rect x="620" y="794" width="80" height="24" rx="7" class="box rope"/>
+  <text x="660" y="811" text-anchor="middle" class="hs">RoPE</text>
+  <rect x="724" y="794" width="80" height="24" rx="7" class="box rope"/>
+  <text x="764" y="811" text-anchor="middle" class="hs">RoPE</text>
+  <line x1="660" y1="838" x2="660" y2="819" class="flow"/>
+  <line x1="764" y1="838" x2="764" y2="819" class="flow"/>
+
+  <rect x="612" y="838" width="96" height="42" rx="7" class="box attn"/>
+  <text x="660" y="856" text-anchor="middle" class="hs">Linear Q</text>
+  <text x="660" y="872" text-anchor="middle" class="xs">576 → 9×64</text>
+  <rect x="716" y="838" width="96" height="42" rx="7" class="box attn"/>
+  <text x="764" y="856" text-anchor="middle" class="hs">Linear K</text>
+  <text x="764" y="872" text-anchor="middle" class="xs">576 → 3×64</text>
+  <rect x="820" y="838" width="96" height="42" rx="7" class="box attn"/>
+  <text x="868" y="856" text-anchor="middle" class="hs">Linear V</text>
+  <text x="868" y="872" text-anchor="middle" class="xs">576 → 3×64</text>
+
+  <path d="M764,928 V900" class="line"/>
+  <circle cx="764" cy="900" r="3.5" fill="#3d444d"/>
+  <path d="M764,900 H660 V881" class="flow"/>
+  <path d="M764,900 V881" class="flow"/>
+  <path d="M764,900 H868 V881" class="flow"/>
+  <text x="774" y="918" class="xs">in [seq, 576]</text>
+
+  <!-- GQA head sharing -->
+  <text x="996" y="738" text-anchor="middle" class="xs">9 query heads</text>
+  <g fill-opacity="0.9">
+    <rect x="930" y="748" width="12" height="12" rx="2" fill="#4c72b0"/>
+    <rect x="945" y="748" width="12" height="12" rx="2" fill="#4c72b0"/>
+    <rect x="960" y="748" width="12" height="12" rx="2" fill="#4c72b0"/>
+    <rect x="975" y="748" width="12" height="12" rx="2" fill="#c9762a"/>
+    <rect x="990" y="748" width="12" height="12" rx="2" fill="#c9762a"/>
+    <rect x="1005" y="748" width="12" height="12" rx="2" fill="#c9762a"/>
+    <rect x="1020" y="748" width="12" height="12" rx="2" fill="#4f9a64"/>
+    <rect x="1035" y="748" width="12" height="12" rx="2" fill="#4f9a64"/>
+    <rect x="1050" y="748" width="12" height="12" rx="2" fill="#4f9a64"/>
+    <rect x="945" y="820" width="12" height="12" rx="2" fill="#4c72b0"/>
+    <rect x="990" y="820" width="12" height="12" rx="2" fill="#c9762a"/>
+    <rect x="1035" y="820" width="12" height="12" rx="2" fill="#4f9a64"/>
+  </g>
+  <g stroke="#8c959f" stroke-width="1.1">
+    <line x1="936" y1="760" x2="951" y2="820"/>
+    <line x1="951" y1="760" x2="951" y2="820"/>
+    <line x1="966" y1="760" x2="951" y2="820"/>
+    <line x1="981" y1="760" x2="996" y2="820"/>
+    <line x1="996" y1="760" x2="996" y2="820"/>
+    <line x1="1011" y1="760" x2="996" y2="820"/>
+    <line x1="1026" y1="760" x2="1041" y2="820"/>
+    <line x1="1041" y1="760" x2="1041" y2="820"/>
+    <line x1="1056" y1="760" x2="1041" y2="820"/>
+  </g>
+  <text x="996" y="848" text-anchor="middle" class="xs">3 shared K/V heads</text>
+  <text x="996" y="864" text-anchor="middle" class="xs">(64 dims each)</text>
+
+  <!-- ===== Config ===== -->
+  <rect x="600" y="950" width="470" height="164" rx="12" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.3"/>
+  <text x="618" y="976" class="hs">Config</text>
+  <text x="618" y="1002" class="s">Vocabulary size</text><text x="820" y="1002" text-anchor="end" class="v">49,152</text>
+  <text x="618" y="1024" class="s">Embedding dim</text><text x="820" y="1024" text-anchor="end" class="v">576</text>
+  <text x="618" y="1046" class="s">Transformer blocks</text><text x="820" y="1046" text-anchor="end" class="v">30</text>
+  <text x="618" y="1068" class="s">Context length</text><text x="820" y="1068" text-anchor="end" class="v">8,192</text>
+  <text x="850" y="1002" class="s">Query / KV heads</text><text x="1052" y="1002" text-anchor="end" class="v">9 / 3</text>
+  <text x="850" y="1024" class="s">Head dim</text><text x="1052" y="1024" text-anchor="end" class="v">64</text>
+  <text x="850" y="1046" class="s">FFN hidden dim</text><text x="1052" y="1046" text-anchor="end" class="v">1,536</text>
+  <text x="850" y="1068" class="s">RoPE base θ</text><text x="1052" y="1068" text-anchor="end" class="v">100,000</text>
+  <text x="618" y="1098" class="xs">No bias terms · no dropout · RMSNorm ε = 1e-5 · tied input/output embeddings</text>
+</svg>

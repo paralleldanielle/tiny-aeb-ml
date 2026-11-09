@@ -155,6 +155,8 @@ tiny-aeb-ml/
 ├── docs/
 │   ├── PLAN.md                 # this file
 │   ├── STYLE.md                # Python style
+│   ├── MODEL.md                # SmolLM2-135M architecture diagram and walkthrough
+│   ├── img/
 │   └── notes/
 │       ├── LEARNING_LOG.md     # one entry per milestone
 │       └── RESULTS.md          # one row per checkpoint x split
